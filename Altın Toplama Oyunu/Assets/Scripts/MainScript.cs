@@ -60,7 +60,11 @@ public class MainScript : MonoBehaviour
     public static Vector3 hedef4;
     public static float kirmiziSonUzunluk;
     public static float maviSonUzunluk;
+    public static float yesilSonUzunluk;
     public static string dosyaYolu;
+    public static Vector3 hedef5;
+    public static Vector3 hedef6;
+    public static Vector3 hedefGizli;
     /*
         FileStream Kırmızı = File.Create();
         FileStream Mavi = File.Create();
@@ -342,7 +346,7 @@ public class MainScript : MonoBehaviour
 
         }
 
-        if (hedefUzaklık10 < (hedefUzaklık5 * 2))
+        if (hedefUzaklık10/adımSayı < ((hedefUzaklık5/adımSayı) * 2))
         {
             kullaniciMavi.Hedef = hedef2;
             maviSonUzunluk = hedefUzaklık10;
@@ -356,6 +360,91 @@ public class MainScript : MonoBehaviour
         }
         kullaniciMavi.AltinMiktari -= 10;
         Debug.Log("mavi hedef" + kullaniciMavi.Hedef);
+    }
+    public void YesilOyuncuHedefBelirle() // Yeşil oyuncun hedef belirlediği fonk
+    {
+        float hedefUzaklık5 = 123123123;
+        float hedefUzaklık10 = 123123123;
+        float hedefUzaklıkGizli = 123123123;
+        float toplamFark5;
+        float toplamFark10;
+        float toplamFarkGizli;
+
+        foreach (Vector3 listedekiVektör5 in altinVektör5)
+        {
+            float farkX5 = Math.Abs(kullaniciYeşil.KonumVektörü.x - listedekiVektör5.x);
+            float farkY5 = Math.Abs(kullaniciYeşil.KonumVektörü.y - listedekiVektör5.y);
+            toplamFark5 = farkX5 + farkY5;
+
+            if (toplamFark5 < hedefUzaklık5)
+            {
+                hedefUzaklık5 = toplamFark5;
+                hedef5 = listedekiVektör5;
+            }
+
+        }
+        foreach (Vector3 listedekiVektör10 in altinVektör10)
+        {
+            float farkX10 = Math.Abs(kullaniciYeşil.KonumVektörü.x - listedekiVektör10.x);
+            float farkY10 = Math.Abs(kullaniciYeşil.KonumVektörü.y - listedekiVektör10.y);
+            toplamFark10 = farkX10 + farkY10;
+
+
+            if (toplamFark10 < hedefUzaklık10)
+            {
+                hedefUzaklık10 = toplamFark10;
+                hedef6 = listedekiVektör10;
+            }
+
+        }
+        foreach (Vector3 listedekiVektörGizli in gizliAltinVektör)
+        {
+            float farkXGizli = Math.Abs(kullaniciYeşil.KonumVektörü.x - listedekiVektörGizli.x);
+            float farkYGizli = Math.Abs(kullaniciYeşil.KonumVektörü.y - listedekiVektörGizli.y);
+            toplamFarkGizli = farkXGizli + farkYGizli;
+
+
+            if (toplamFarkGizli < hedefUzaklıkGizli)
+            {
+                hedefUzaklıkGizli = toplamFarkGizli;
+                hedefGizli = listedekiVektörGizli;
+            }
+
+        }
+
+        if (hedefUzaklık10 / adımSayı < (hedefUzaklık5 / adımSayı) * 2)
+        {
+            if (hedefUzaklıkGizli / adımSayı < (hedefUzaklık10 / adımSayı) * 2)
+            {
+                kullaniciYeşil.Hedef = hedefGizli;
+                yesilSonUzunluk = hedefUzaklıkGizli;
+
+            }
+            else
+            {
+                kullaniciYeşil.Hedef = hedef6;
+                yesilSonUzunluk = hedefUzaklık10;
+            }
+
+        }
+        else if (hedefUzaklık10 / adımSayı > (hedefUzaklık5 / adımSayı) * 2)
+        {
+            if (hedefUzaklıkGizli / adımSayı > (hedefUzaklık5 / adımSayı) * 4)
+            {
+                kullaniciYeşil.Hedef = hedef5;
+                yesilSonUzunluk = hedefUzaklık5;
+            }
+            else
+            {
+                kullaniciYeşil.Hedef = hedefGizli;
+                yesilSonUzunluk = hedefUzaklıkGizli;
+            }
+
+
+        }
+        kullaniciYeşil.AltinMiktari -= 15;
+        Debug.Log("yesil son hedef" + kullaniciYeşil.Hedef);
+
     }
     public void MorOyuncuHedefBelirle() //Mor oyuncunun hedef belirlediği fonksiyon
     {
@@ -372,12 +461,12 @@ public class MainScript : MonoBehaviour
 
             if (toplamFark5 < hedefUzaklık5)
             {
-                if (listedekiVektör5 != kullaniciMavi.Hedef && listedekiVektör5 != kullaniciKirmizi.Hedef)
+                if (listedekiVektör5 != kullaniciMavi.Hedef && listedekiVektör5 != kullaniciKirmizi.Hedef && listedekiVektör5!=kullaniciYeşil.Hedef)
                 {
                     hedefUzaklık5 = toplamFark5;
                     hedef3 = listedekiVektör5;
                 }
-                else if (listedekiVektör5 == kullaniciKirmizi.Hedef)
+                if (listedekiVektör5 == kullaniciKirmizi.Hedef)
                 {
                     if (toplamFark5 < kirmiziSonUzunluk)
                     {
@@ -386,9 +475,18 @@ public class MainScript : MonoBehaviour
                     }
 
                 }
-                else if (listedekiVektör5 == kullaniciMavi.Hedef)
+                if (listedekiVektör5 == kullaniciMavi.Hedef)
                 {
                     if (toplamFark5 < maviSonUzunluk)
+                    {
+                        hedefUzaklık5 = toplamFark5;
+                        hedef3 = listedekiVektör5;
+                    }
+
+                }
+                if (listedekiVektör5 == kullaniciYeşil.Hedef)
+                {
+                    if (toplamFark5 < yesilSonUzunluk)
                     {
                         hedefUzaklık5 = toplamFark5;
                         hedef3 = listedekiVektör5;
@@ -407,12 +505,12 @@ public class MainScript : MonoBehaviour
 
             if (toplamFark10 < hedefUzaklık10)
             {
-                if (listedekiVektör10 != kullaniciMavi.Hedef && listedekiVektör10 != kullaniciKirmizi.Hedef)
+                if (listedekiVektör10 != kullaniciMavi.Hedef && listedekiVektör10 != kullaniciKirmizi.Hedef && listedekiVektör10 != kullaniciYeşil.Hedef)
                 {
                     hedefUzaklık10 = toplamFark10;
                     hedef4 = listedekiVektör10;
                 }
-                else if (listedekiVektör10 == kullaniciKirmizi.Hedef)
+                if (listedekiVektör10 == kullaniciKirmizi.Hedef)
                 {
                     if (toplamFark10 < kirmiziSonUzunluk)
                     {
@@ -421,9 +519,18 @@ public class MainScript : MonoBehaviour
                     }
 
                 }
-                else if (listedekiVektör10 == kullaniciMavi.Hedef)
+                if (listedekiVektör10 == kullaniciMavi.Hedef)
                 {
                     if (toplamFark10 < maviSonUzunluk)
+                    {
+                        hedefUzaklık10 = toplamFark10;
+                        hedef4 = listedekiVektör10;
+                    }
+
+                }
+                if (listedekiVektör10 == kullaniciYeşil.Hedef)
+                {
+                    if (toplamFark10 < yesilSonUzunluk)
                     {
                         hedefUzaklık10 = toplamFark10;
                         hedef4 = listedekiVektör10;
@@ -1751,6 +1858,7 @@ public class MainScript : MonoBehaviour
     {
         KirmiziOyuncuHedefBelirle();
         MaviOyuncuHedefBelirle();
+        YesilOyuncuHedefBelirle();
         MorOyuncuHedefBelirle();
         StartCoroutine(Bekle());
         while (altinKareSayisi != 0)
