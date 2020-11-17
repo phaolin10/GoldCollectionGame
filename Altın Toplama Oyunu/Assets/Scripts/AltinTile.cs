@@ -75,7 +75,27 @@ public class AltinTile : MonoBehaviour
             MainScript.calistiMi = true;
 
         }
-       if(other.CompareTag("oyuncu"))
+        if (other.transform.gameObject.name == this.transform.gameObject.name && other.CompareTag("gizliAltin"))
+        {
+            MainScript.altinKareSayisi += 2;
+
+            Debug.Log("silinen" + other.gameObject.name);
+            Destroy(other.gameObject);
+
+            Vector3 silinecekVektör = new Vector3(other.gameObject.transform.position.x, other.gameObject.transform.position.y, 0);
+            MainScript.altinVektör.Remove(silinecekVektör);
+            if (this.altinMiktari == 5)
+            {
+                MainScript.altinVektör5.Remove(silinecekVektör);
+            }
+            else if (this.altinMiktari == 10)
+            {
+                MainScript.altinVektör10.Remove(silinecekVektör);
+            }
+            MainScript.calistiMi = true;
+
+        }
+        if (other.CompareTag("oyuncu"))
         {
             Debug.Log("asdfas" + other.transform.gameObject.name);
             Destroy(this.gameObject);
@@ -85,6 +105,10 @@ public class AltinTile : MonoBehaviour
         }
        
 
+    }
+    public void OnTriggerExit2D(Collider2D collision)
+    {
+        
     }
 
     // Update is called once per frame
