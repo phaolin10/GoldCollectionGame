@@ -35,6 +35,7 @@ public class MainScript : MonoBehaviour
     public GameObject maviOyuncuPrefab;
     public GameObject yeşilOyuncuPrefab;
     public GameObject morOyuncuPrefab;
+    public GameObject[,] gizliAltın;
     public static int kareSayisi;
     public static int altinKareSayisi;
     public static int gizliAltinKareSayisi;
@@ -89,16 +90,19 @@ public class MainScript : MonoBehaviour
     void Start()
     {
         GetCurrentDirectory();
-     /*   FileStream Kırmızı = File.Create(dosyaYolu + @"KırmızıOyuncu.txt");
-        FileStream Mavi = File.Create(dosyaYolu + @"MaviOyuncu.txt");
-        FileStream Yeşil = File.Create(dosyaYolu + @"YeşilOyuncu.txt");
-        FileStream Mor = File.Create(dosyaYolu + @"MorOyuncu.txt");
-     */
+        /*   FileStream Kırmızı = File.Create(dosyaYolu + @"KırmızıOyuncu.txt");
+           FileStream Mavi = File.Create(dosyaYolu + @"MaviOyuncu.txt");
+           FileStream Yeşil = File.Create(dosyaYolu + @"YeşilOyuncu.txt");
+           FileStream Mor = File.Create(dosyaYolu + @"MorOyuncu.txt");
+        */
 
 
         /*    StreamWriter yazYeşil = new StreamWriter(dosyaYolu + @"YeşilOyuncu.txt");
             StreamWriter yazMor = new StreamWriter(dosyaYolu + @"MorOyuncu.txt");
-        */
+        
+         */
+
+
         tiles = new Tile[xKenar, yKenar];
         altinTiles = new AltinTile[xKenar, yKenar];
         gizliAltinTiles = new AltinTile[xKenar, yKenar];
@@ -114,9 +118,8 @@ public class MainScript : MonoBehaviour
         kullaniciYeşil = new Kullanici(yeşilVektör);
 
 
-        StartCoroutine(SetupTiles(xKenar, yKenar));
-        StartCoroutine(Bekle());
-        StartCoroutine(HareketKontrol());
+        SetupTiles(xKenar, yKenar);
+        
         // HareketEt();
         /*  Kırmızı.Close();
           Mavi.Close();
@@ -156,7 +159,7 @@ public class MainScript : MonoBehaviour
 
 
     }
-    public IEnumerator SetupTiles(int xKenar, int yKenar) // Oyun Masasını oluşturan fonksiyon
+    public void SetupTiles(int xKenar, int yKenar) // Oyun Masasını oluşturan fonksiyon
     {
         kareSayisi = xKenar * yKenar;
         altinKareSayisi = kareSayisi * altınMiktar / 100;
@@ -188,8 +191,10 @@ public class MainScript : MonoBehaviour
         AltinUret10(xKenar, yKenar);
         GizliAltinUret(xKenar, yKenar);
 
+        StartCoroutine(HareketKontrol());
 
-        yield return new WaitForSeconds(7);
+
+
     }
     public void AltinUret5(int xKenar, int yKenar) // masadaki altınları oluşturan fonksiyon.
     {
@@ -217,7 +222,7 @@ public class MainScript : MonoBehaviour
 
 
         }
-        Bekle();
+
         altinKareSayisi = kareSayisi * altınMiktar / 100;
 
     }
@@ -248,14 +253,12 @@ public class MainScript : MonoBehaviour
             calistiMi = false;
 
 
-            Bekle();
         }
         altinKareSayisi = kareSayisi * altınMiktar / 100;
 
     }
     public void GizliAltinUret(int xKenar, int yKenar) // masadaki gizli altınları oluşturan fonksiyon.
     {
-
         for (int b = 0; b < gizliAltinKareSayisi; b++)
         {
             int iRandom = UnityEngine.Random.Range(0, xKenar);
@@ -263,28 +266,25 @@ public class MainScript : MonoBehaviour
 
 
             GameObject tile3 = Instantiate(gizliAltinPrefab, new Vector3(iRandom, jRandom, 0), Quaternion.identity) as GameObject;
-
             tile3.name = "AltinTile(" + iRandom + "," + jRandom + ") ";
-
-            gizliAltinTiles[iRandom, jRandom] = tile3.GetComponent<AltinTile>();
+            altinTiles[iRandom, jRandom] = tile3.GetComponent<AltinTile>();
 
             tile3.transform.parent = transform;
-            tile3.gameObject.SetActive(false);
+            tile3.SetActive(false);
 
             Vector3 yeniVektör = new Vector3(iRandom, jRandom, 0);
             gizliAltinVektör.Add(yeniVektör);
-            gizliAltinTiles[iRandom, jRandom].AltinMiktari = 20;
-            gizliAltinTiles[iRandom, jRandom].GizliMi = true;
-            gizliAltinTiles[iRandom, jRandom].Konum = yeniVektör;
+            altinTiles[iRandom, jRandom].AltinMiktari = 20;
+            altinTiles[iRandom, jRandom].GizliMi = true;
+            altinTiles[iRandom, jRandom].Konum = yeniVektör;
 
 
 
         }
-        Bekle();
-        gizliAltinKareSayisi = altinKareSayisi * 10 / 100;
+        gizliAltinKareSayisi = altinKareSayisi * gizliAltınMiktar / 100;
 
     }
-    public void KirmiziOyuncuHedefBelirle() // kırmızı oyuncunun hedef belirlediği fonksiyon.
+    public void KirmiziOyuncuHedefBelirle() // kırmızı oyuncunun hedef belirlediği fonksiyon. A oyuncusu
     {
         /* if (dene)
          {
@@ -311,7 +311,7 @@ public class MainScript : MonoBehaviour
 
 
     }
-    public void MaviOyuncuHedefBelirle() // Mavi oyuncun hedef belirlediği fonk
+    public void MaviOyuncuHedefBelirle() // Mavi oyuncun hedef belirlediği fonk. B Oyuncusu
     {
         float hedefUzaklık5 = 123123123;
         float hedefUzaklık10 = 123123123;
@@ -346,7 +346,7 @@ public class MainScript : MonoBehaviour
 
         }
 
-        if (hedefUzaklık10/adımSayı < ((hedefUzaklık5/adımSayı) * 2))
+        if (hedefUzaklık10 / adımSayı < ((hedefUzaklık5 / adımSayı) * 2))
         {
             kullaniciMavi.Hedef = hedef2;
             maviSonUzunluk = hedefUzaklık10;
@@ -361,7 +361,7 @@ public class MainScript : MonoBehaviour
         kullaniciMavi.AltinMiktari -= 10;
         Debug.Log("mavi hedef" + kullaniciMavi.Hedef);
     }
-    public void YesilOyuncuHedefBelirle() // Yeşil oyuncun hedef belirlediği fonk
+    public void YeşilOyuncuHedefBelirle() // Yeşil oyuncun hedef belirlediği fonk. C oyuncusu
     {
         float hedefUzaklık5 = 123123123;
         float hedefUzaklık10 = 123123123;
@@ -416,9 +416,13 @@ public class MainScript : MonoBehaviour
         {
             if (hedefUzaklıkGizli / adımSayı < (hedefUzaklık10 / adımSayı) * 2)
             {
+                this.gameObject.SetActive(true);
+                //    GameObject..gizliAltinPrefab.SetActive(true);
                 kullaniciYeşil.Hedef = hedefGizli;
                 yesilSonUzunluk = hedefUzaklıkGizli;
-
+                this.gameObject.SetActive(true);
+                //GameObject.Find("AltinTile(" + kullaniciYeşil.Hedef.x + "," + kullaniciYeşil.Hedef.y + ") ").SetActive(true);
+          //      gizliAltın[Convert.ToInt32(kullaniciYeşil.Hedef.x), Convert.ToInt32(kullaniciYeşil.Hedef.y)].SetActive(true);
             }
             else
             {
@@ -433,11 +437,14 @@ public class MainScript : MonoBehaviour
             {
                 kullaniciYeşil.Hedef = hedef5;
                 yesilSonUzunluk = hedefUzaklık5;
+
             }
             else
             {
+                this.gameObject.SetActive(true);
                 kullaniciYeşil.Hedef = hedefGizli;
                 yesilSonUzunluk = hedefUzaklıkGizli;
+                // GameObject.Find("AltinTile(" + kullaniciYeşil.Hedef.x + "," + kullaniciYeşil.Hedef.y+ ") ").SetActiveRecursively(true);
             }
 
 
@@ -446,7 +453,7 @@ public class MainScript : MonoBehaviour
         Debug.Log("yesil son hedef" + kullaniciYeşil.Hedef);
 
     }
-    public void MorOyuncuHedefBelirle() //Mor oyuncunun hedef belirlediği fonksiyon
+    public void MorOyuncuHedefBelirle() //Mor oyuncunun hedef belirlediği fonksiyon. D oyuncusu
     {
         float hedefUzaklık5 = 123123123;
         float hedefUzaklık10 = 123123123;
@@ -461,7 +468,7 @@ public class MainScript : MonoBehaviour
 
             if (toplamFark5 < hedefUzaklık5)
             {
-                if (listedekiVektör5 != kullaniciMavi.Hedef && listedekiVektör5 != kullaniciKirmizi.Hedef && listedekiVektör5!=kullaniciYeşil.Hedef)
+                if (listedekiVektör5 != kullaniciMavi.Hedef && listedekiVektör5 != kullaniciKirmizi.Hedef && listedekiVektör5 != kullaniciYeşil.Hedef)
                 {
                     hedefUzaklık5 = toplamFark5;
                     hedef3 = listedekiVektör5;
@@ -576,9 +583,11 @@ public class MainScript : MonoBehaviour
                         if (math.abs(kullaniciKirmizi.KonumVektörü.y - kullaniciKirmizi.Hedef.y) <= hamleSayisi)
                         {
                             Vector3 yeniY = new Vector3(0, math.abs(kullaniciKirmizi.KonumVektörü.y - kullaniciKirmizi.Hedef.y), 0);
+                            
                             if (kullaniciKirmizi.Hedef.y - kullaniciKirmizi.KonumVektörü.y >= 0)
                             {
                                 kirmiziOyuncuPrefab.transform.position += yeniY;
+                                //kirmiziOyuncuPrefab.transform.Translate((yeniY * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü += yeniY;
                                 if (kullaniciKirmizi.KonumVektörü == kullaniciKirmizi.Hedef)
                                 {
@@ -601,6 +610,7 @@ public class MainScript : MonoBehaviour
                             else
                             {
                                 kirmiziOyuncuPrefab.transform.position -= yeniY;
+                                //kirmiziOyuncuPrefab.transform.Translate((-yeniY * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü -= yeniY;
                                 if (kullaniciKirmizi.KonumVektörü == kullaniciKirmizi.Hedef)
                                 {
@@ -627,11 +637,13 @@ public class MainScript : MonoBehaviour
                             if (kullaniciKirmizi.Hedef.y - kullaniciKirmizi.KonumVektörü.y > 0)
                             {
                                 kirmiziOyuncuPrefab.transform.position += yeniY;
+                                //kirmiziOyuncuPrefab.transform.Translate((yeniY * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü += yeniY;
                             }
                             else
                             {
                                 kirmiziOyuncuPrefab.transform.position -= yeniY;
+                                //kirmiziOyuncuPrefab.transform.Translate((-yeniY * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü -= yeniY;
                             }
                         }
@@ -646,6 +658,7 @@ public class MainScript : MonoBehaviour
                             if (kullaniciKirmizi.Hedef.x - kullaniciKirmizi.KonumVektörü.x >= 0)
                             {
                                 kirmiziOyuncuPrefab.transform.position += yeniX;
+                                //kirmiziOyuncuPrefab.transform.Translate((yeniX * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü += yeniX;
                                 if (kullaniciKirmizi.KonumVektörü == kullaniciKirmizi.Hedef)
                                 {
@@ -667,6 +680,7 @@ public class MainScript : MonoBehaviour
                             else
                             {
                                 kirmiziOyuncuPrefab.transform.position -= yeniX;
+                                //kirmiziOyuncuPrefab.transform.Translate((-yeniX * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü -= yeniX;
                                 if (kullaniciKirmizi.KonumVektörü == kullaniciKirmizi.Hedef)
                                 {
@@ -693,11 +707,13 @@ public class MainScript : MonoBehaviour
                             if (kullaniciKirmizi.Hedef.x - kullaniciKirmizi.KonumVektörü.x > 0)
                             {
                                 kirmiziOyuncuPrefab.transform.position += yeniX;
+                                //kirmiziOyuncuPrefab.transform.Translate((yeniX * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü += yeniX;
                             }
                             else
                             {
                                 kirmiziOyuncuPrefab.transform.position -= yeniX;
+                                //kirmiziOyuncuPrefab.transform.Translate((-yeniX * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü -= yeniX;
                             }
                         }
@@ -726,6 +742,7 @@ public class MainScript : MonoBehaviour
                                     KirmiziOyuncuHedefBelirle();
                                 }
                                 kirmiziOyuncuPrefab.transform.position += yeniX;
+                                //kirmiziOyuncuPrefab.transform.Translate((yeniX * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü += yeniX;
                             }
                             else
@@ -747,6 +764,7 @@ public class MainScript : MonoBehaviour
                                     KirmiziOyuncuHedefBelirle();
                                 }
                                 kirmiziOyuncuPrefab.transform.position -= yeniX;
+                                //kirmiziOyuncuPrefab.transform.Translate((-yeniX * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü -= yeniX;
                             }
                         }
@@ -757,11 +775,13 @@ public class MainScript : MonoBehaviour
                             if (kullaniciKirmizi.Hedef.x - kullaniciKirmizi.KonumVektörü.x > 0)
                             {
                                 kirmiziOyuncuPrefab.transform.position += yeniX;
+                                //kirmiziOyuncuPrefab.transform.Translate((yeniX * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü += yeniX;
                             }
                             else
                             {
                                 kirmiziOyuncuPrefab.transform.position -= yeniX;
+                                //kirmiziOyuncuPrefab.transform.Translate((-yeniX * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü -= yeniX;
                             }
                         }
@@ -800,11 +820,13 @@ public class MainScript : MonoBehaviour
                             if (kullaniciKirmizi.Hedef.x - kullaniciKirmizi.KonumVektörü.x > 0)
                             {
                                 kirmiziOyuncuPrefab.transform.position += yeniX;
+                                //kirmiziOyuncuPrefab.transform.Translate((yeniX * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü += yeniX;
                             }
                             else
                             {
                                 kirmiziOyuncuPrefab.transform.position -= yeniX;
+                                //kirmiziOyuncuPrefab.transform.Translate((-yeniX * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü -= yeniX;
                             }
                         }
@@ -814,10 +836,12 @@ public class MainScript : MonoBehaviour
                             if (kullaniciKirmizi.Hedef.y - kullaniciKirmizi.KonumVektörü.y > 0)
                             {
                                 kirmiziOyuncuPrefab.transform.position += yeniY;
+                                //  kirmiziOyuncuPrefab.transform.Translate((yeniY * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü += yeniY;
                             }
                             else
                             {
+                                //   kirmiziOyuncuPrefab.transform.Translate((-yeniY * Time.deltaTime));
                                 kirmiziOyuncuPrefab.transform.position -= yeniY;
                                 kullaniciKirmizi.KonumVektörü -= yeniY;
                             }
@@ -829,11 +853,13 @@ public class MainScript : MonoBehaviour
                             if (kullaniciKirmizi.Hedef.x - kullaniciKirmizi.KonumVektörü.x > 0)
                             {
                                 kirmiziOyuncuPrefab.transform.position += yeni;
+                                // kirmiziOyuncuPrefab.transform.Translate((yeni * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü += yeni;
                             }
                             else
                             {
                                 kirmiziOyuncuPrefab.transform.position -= yeni;
+                                //   kirmiziOyuncuPrefab.transform.Translate((-yeni * Time.deltaTime));
                                 kullaniciKirmizi.KonumVektörü -= yeni;
                             }
 
@@ -847,11 +873,13 @@ public class MainScript : MonoBehaviour
                         if (kullaniciKirmizi.Hedef.x - kullaniciKirmizi.KonumVektörü.x > 0)
                         {
                             kirmiziOyuncuPrefab.transform.position += yeni;
+                            //   kirmiziOyuncuPrefab.transform.Translate((yeni * Time.deltaTime));
                             kullaniciKirmizi.KonumVektörü += yeni;
                         }
                         else
                         {
                             kirmiziOyuncuPrefab.transform.position -= yeni;
+                            //    kirmiziOyuncuPrefab.transform.Translate((-yeni * Time.deltaTime));
                             kullaniciKirmizi.KonumVektörü -= yeni;
                         }
 
@@ -1550,7 +1578,7 @@ public class MainScript : MonoBehaviour
                                         altinVektör10.Remove(silinecekVektör);
                                     }
                                     altinKareSayisi--;
-                                    MaviOyuncuHedefBelirle();
+                                    YeşilOyuncuHedefBelirle();
                                 }
 
                             }
@@ -1572,7 +1600,7 @@ public class MainScript : MonoBehaviour
                                         altinVektör10.Remove(silinecekVektör);
                                     }
                                     altinKareSayisi--;
-                                    MaviOyuncuHedefBelirle();
+                                    YeşilOyuncuHedefBelirle();
                                 }
                             }
                         }
@@ -1605,7 +1633,7 @@ public class MainScript : MonoBehaviour
                                 kullaniciYeşil.KonumVektörü += yeniX;
                                 if (kullaniciYeşil.KonumVektörü == kullaniciYeşil.Hedef)
                                 {
-                                    Vector3 silinecekVektör = new Vector3(kullaniciMavi.KonumVektörü.x, kullaniciMavi.KonumVektörü.y, 0);
+                                    Vector3 silinecekVektör = new Vector3(kullaniciYeşil.KonumVektörü.x, kullaniciYeşil.KonumVektörü.y, 0);
                                     kullaniciYeşil.AltinMiktari += altinTiles[Convert.ToInt32(kullaniciYeşil.Hedef.x), Convert.ToInt32(kullaniciYeşil.Hedef.y)].AltinMiktari;
                                     altinVektör.Remove(silinecekVektör);
                                     if (altinTiles[Convert.ToInt32(kullaniciYeşil.Hedef.x), Convert.ToInt32(kullaniciYeşil.Hedef.y)].AltinMiktari == 5)
@@ -1617,7 +1645,7 @@ public class MainScript : MonoBehaviour
                                         altinVektör10.Remove(silinecekVektör);
                                     }
                                     altinKareSayisi--;
-                                    MaviOyuncuHedefBelirle();
+                                    YeşilOyuncuHedefBelirle();
                                 }
                             }
                             else
@@ -1638,7 +1666,7 @@ public class MainScript : MonoBehaviour
                                         altinVektör10.Remove(silinecekVektör);
                                     }
                                     altinKareSayisi--;
-                                    MaviOyuncuHedefBelirle();
+                                    YeşilOyuncuHedefBelirle();
                                 }
                             }
                         }
@@ -1679,7 +1707,7 @@ public class MainScript : MonoBehaviour
                                         altinVektör10.Remove(silinecekVektör);
                                     }
                                     altinKareSayisi--;
-                                    MaviOyuncuHedefBelirle();
+                                    YeşilOyuncuHedefBelirle();
                                 }
                                 yeşilOyuncuPrefab.transform.position += yeniX;
                                 kullaniciYeşil.KonumVektörü += yeniX;
@@ -1700,14 +1728,14 @@ public class MainScript : MonoBehaviour
                                         altinVektör10.Remove(silinecekVektör);
                                     }
                                     altinKareSayisi--;
-                                    MaviOyuncuHedefBelirle();
+                                    YeşilOyuncuHedefBelirle();
                                 }
                                 yeşilOyuncuPrefab.transform.position -= yeniX;
                                 kullaniciYeşil.KonumVektörü -= yeniX;
                             }
                         }
 
-                        else if (math.abs(kullaniciMavi.KonumVektörü.x - kullaniciMavi.Hedef.x) > hamleSayisi)
+                        else if (math.abs(kullaniciYeşil.KonumVektörü.x - kullaniciYeşil.Hedef.x) > hamleSayisi)
                         {
                             Vector3 yeniX = new Vector3(hamleSayisi, 0, 0);
                             if (kullaniciYeşil.Hedef.x - kullaniciYeşil.KonumVektörü.x > 0)
@@ -1737,7 +1765,7 @@ public class MainScript : MonoBehaviour
                                     altinVektör10.Remove(silinecekVektör);
                                 }
                                 altinKareSayisi--;
-                                MaviOyuncuHedefBelirle();
+                                YeşilOyuncuHedefBelirle();
                             }
                         }
                     }
@@ -1799,7 +1827,7 @@ public class MainScript : MonoBehaviour
                     else if (math.abs(kullaniciYeşil.Hedef.x - kullaniciYeşil.KonumVektörü.x) + math.abs(kullaniciYeşil.Hedef.y - kullaniciYeşil.KonumVektörü.y) > hamleSayisi &&
                     math.abs(kullaniciYeşil.Hedef.x - kullaniciYeşil.KonumVektörü.x) <= hamleSayisi && math.abs(kullaniciYeşil.Hedef.y - kullaniciYeşil.KonumVektörü.y) <= hamleSayisi)
                     {
-                        Vector3 yeni = new Vector3(math.abs(kullaniciMavi.Hedef.x - kullaniciMavi.KonumVektörü.x), 0, 0);
+                        Vector3 yeni = new Vector3(math.abs(kullaniciYeşil.Hedef.x - kullaniciYeşil.KonumVektörü.x), 0, 0);
                         if (kullaniciYeşil.Hedef.x - kullaniciYeşil.KonumVektörü.x > 0)
                         {
                             yeşilOyuncuPrefab.transform.position += yeni;
@@ -1822,13 +1850,13 @@ public class MainScript : MonoBehaviour
 
             else
             {
-                MaviOyuncuHedefBelirle();
-                MaviOyuncuHareketEttir();
+               YeşilOyuncuHedefBelirle();
+                YeşilOyuncuHareketEttir();
             }
         }
         maviHareketEt = false;
-        kullaniciMavi.AltinMiktari -= 5;
-        yazMavi.Write(kullaniciMavi.KonumVektörü.x + "," + kullaniciMavi.KonumVektörü.y);
+        kullaniciYeşil.AltinMiktari -= 5;
+        yazMavi.Write(kullaniciYeşil.KonumVektörü.x + "," + kullaniciYeşil.KonumVektörü.y);
         yazMavi.Close();
         /*  Debug.Log("MAVİ ALTIN" + kullaniciMavi.AltinMiktari);
           Debug.Log("Mavi bu karede" + kullaniciMavi.KonumVektörü);
@@ -1854,13 +1882,55 @@ public class MainScript : MonoBehaviour
         SceneManager.LoadScene(SahneGec);
         Debug.Log(SahneGec + "yüklendi");
     }
+    public void TekrarOlustur5()
+    {
+        int iRandom = UnityEngine.Random.Range(0, xKenar);
+        int jRandom = UnityEngine.Random.Range(0, yKenar);
+
+        GameObject tile2 = Instantiate(altinPrefab, new Vector3(iRandom, jRandom, 0), Quaternion.identity) as GameObject;
+
+        tile2.name = "AltinTile(" + iRandom + "," + jRandom + ") ";
+
+        altinTiles[iRandom, jRandom] = tile2.GetComponent<AltinTile>();
+
+        tile2.transform.parent = transform;
+
+
+        Vector3 yeniVektör = new Vector3(iRandom, jRandom, 0);
+        altinVektör.Add(yeniVektör);
+        altinVektör5.Add(yeniVektör);
+        altinTiles[iRandom, jRandom].AltinMiktari = 5;
+        altinTiles[iRandom, jRandom].Konum = yeniVektör;
+        altinTiles[iRandom, jRandom].GizliMi = false;
+    }
+    public void TekrarOlustur10()
+    {
+        int iRandom = UnityEngine.Random.Range(0, xKenar);
+        int jRandom = UnityEngine.Random.Range(0, yKenar);
+
+        GameObject tile2 = Instantiate(altinPrefab10, new Vector3(iRandom, jRandom, 0), Quaternion.identity) as GameObject;
+
+        tile2.name = "AltinTile(" + iRandom + "," + jRandom + ") ";
+
+        altinTiles[iRandom, jRandom] = tile2.GetComponent<AltinTile>();
+
+        tile2.transform.parent = transform;
+
+
+        Vector3 yeniVektör = new Vector3(iRandom, jRandom, 0);
+        altinVektör.Add(yeniVektör);
+        altinVektör10.Add(yeniVektör);
+        altinTiles[iRandom, jRandom].AltinMiktari = 10;
+        altinTiles[iRandom, jRandom].Konum = yeniVektör;
+        altinTiles[iRandom, jRandom].GizliMi = false;
+    }
     IEnumerator HareketKontrol()
     {
         KirmiziOyuncuHedefBelirle();
         MaviOyuncuHedefBelirle();
-        YesilOyuncuHedefBelirle();
+        YeşilOyuncuHedefBelirle();
         MorOyuncuHedefBelirle();
-        StartCoroutine(Bekle());
+        Debug.Log("kirmizi altin" + kullaniciKirmizi.AltinMiktari);
         while (altinKareSayisi != 0)
         {
 
@@ -1905,12 +1975,12 @@ public class MainScript : MonoBehaviour
             {
                 yeşilHareketEt = true;
                 YeşilOyuncuHareketEttir();
-                Debug.Log("kalan mor altın " + kullaniciYeşil.AltinMiktari);
+                Debug.Log("kalan yeşil altın " + kullaniciYeşil.AltinMiktari);
                 yield return new WaitForSeconds(3);
             }
             else
             {
-                Debug.Log("mor oyuncunun altını bitti");
+                Debug.Log("yeşil oyuncunun altını bitti");
                 yeşilHareketEt = false;
             }
 
@@ -1929,6 +1999,7 @@ public class MainScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+       // KirmiziOyuncuHareketEttir();
         /* if(Input.GetKeyDown(KeyCode.Space))
          {
              kullanıcıHareketEtBastı = true;

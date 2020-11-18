@@ -16,6 +16,8 @@ public class Kullanici : MonoBehaviour
     private int altinMiktari;
     private Vector3 konumVektörü;
     private Vector3 hedef;
+    private int harcananAltin;
+    private int toplananAltin;
 
     public Kullanici(Vector3 kullaniciVektör)
     {
@@ -50,9 +52,28 @@ public class Kullanici : MonoBehaviour
     {
         return this.altinMiktari;
     }
+    public int ToplananAltin
+    {
+        get { return toplananAltin; }
+        set { this.toplananAltin = value; }
+    }
+    public int GetToplananAltin()
+    {
+        return this.toplananAltin;
+    }
+    public int HarcananAltin
+    {
+        get { return harcananAltin; }
+        set { this.harcananAltin = value; }
+    }
+    public int GetHarcananAltin()
+    {
+        return this.harcananAltin;
+    }
+
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("altın"))
+        if (collision.CompareTag("altın"))
         {
             Destroy(collision.gameObject);
             Debug.Log("altınsildi" + collision.gameObject.name);
