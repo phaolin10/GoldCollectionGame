@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\AltinTile.cs" />
+    <Compile Include="Assets\Scripts\DosyaYaz.cs" />
     <Compile Include="Assets\Scripts\Kullanici.cs" />
     <Compile Include="Assets\Scripts\MainScript.cs" />
     <Compile Include="Assets\Scripts\Tile.cs" />

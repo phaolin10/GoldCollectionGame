@@ -52,7 +52,7 @@ public class AltinTile : MonoBehaviour
         return this.altinMiktari;
     }
 
-    public IEnumerator OnTriggerEnter2D(Collider2D other)
+    public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.transform.gameObject.name == this.transform.gameObject.name && other.CompareTag("altın"))
         {
@@ -108,7 +108,7 @@ public class AltinTile : MonoBehaviour
             MainScript.altinKareSayisi--;
          //   MainScript.dene = false;
         }
-        yield return new WaitForSeconds(3);
+      //  yield return new WaitForSeconds(3);
 
     }
     public void OnTriggerExit2D(Collider2D collision)

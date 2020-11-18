@@ -18,6 +18,7 @@ public class Kullanici : MonoBehaviour
     private Vector3 hedef;
     private int harcananAltin;
     private int toplananAltin;
+    private string adım;
 
     public Kullanici(Vector3 kullaniciVektör)
     {
@@ -69,6 +70,15 @@ public class Kullanici : MonoBehaviour
     public int GetHarcananAltin()
     {
         return this.harcananAltin;
+    }
+     public string Adım
+    {
+        get { return adım; }
+        set { this.adım = value; }
+    }
+    public string GetAdım()
+    {
+        return this.adım;
     }
 
     public void OnTriggerEnter2D(Collider2D collision)
