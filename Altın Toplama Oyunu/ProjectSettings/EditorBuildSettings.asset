@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/OyunSahnesi.unity
     guid: 077c6f1b3ea8ee64cb795fdd6afcfbf6
+  - enabled: 1
+    path: Assets/Scenes/SonucSahnesi.unity
+    guid: 49669cd75eee9354d95ef471ae7045f7
   m_configObjects: {}
