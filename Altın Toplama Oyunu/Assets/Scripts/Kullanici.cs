@@ -83,11 +83,7 @@ public class Kullanici : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("altın"))
-        {
-            Destroy(collision.gameObject);
-            Debug.Log("altınsildi" + collision.gameObject.name);
-        }
+
     }
     // Update is called once per frame
     void Update()

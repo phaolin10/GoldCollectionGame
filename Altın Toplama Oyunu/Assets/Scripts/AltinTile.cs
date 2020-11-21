@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -54,68 +52,84 @@ public class AltinTile : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.transform.gameObject.name == this.transform.gameObject.name && other.CompareTag("altın"))
+        if (other.transform.gameObject.name == this.transform.gameObject.name)
         {
-
+            
             Debug.Log("silinen" + other.gameObject.name);
-            Destroy(other.gameObject);
 
-            Vector3 silinecekVektör = new Vector3(other.gameObject.transform.position.x,other.gameObject.transform.position.y,0) ;
-            MainScript.altinVektör.Remove(silinecekVektör);
-            if (this.altinMiktari == 5)
-            {
-                MainScript._instance.TekrarOlustur5();
-                Debug.Log("altinoluşturdu");
-                MainScript.altinVektör5.Remove(silinecekVektör);
-                MainScript._instance.altinTiles[Convert.ToInt32(silinecekVektör.x), Convert.ToInt32(silinecekVektör.y)] = null;
-            }
-            else if (this.altinMiktari == 10)
-            {
-                MainScript._instance.TekrarOlustur10();
-                Debug.Log("altinoluşturdu");
-                MainScript.altinVektör10.Remove(silinecekVektör);
-                MainScript._instance.altinTiles[Convert.ToInt32(silinecekVektör.x),Convert.ToInt32( silinecekVektör.y)] = null;
-            }
-
-        }
-        if (other.transform.gameObject.name == this.transform.gameObject.name && other.CompareTag("gizliAltin"))
-        {
-
-            Debug.Log("silinen" + other.gameObject.name);
-            Destroy(other.gameObject);
 
             Vector3 silinecekVektör = new Vector3(other.gameObject.transform.position.x, other.gameObject.transform.position.y, 0);
             MainScript.altinVektör.Remove(silinecekVektör);
             if (this.altinMiktari == 5)
             {
-
+                Destroy(other.gameObject);
+                Debug.Log("altinoluşturdu");
                 MainScript.altinVektör5.Remove(silinecekVektör);
-                MainScript._instance.altinTiles[Convert.ToInt32(silinecekVektör.x), Convert.ToInt32(silinecekVektör.y)] = null;
+                MainScript._instance.TekrarOlustur5();
+            }
+            else if (this.altinMiktari == 10)
+            {
+                Destroy(other.gameObject);
+                Debug.Log("altinoluşturdu");
+                MainScript.altinVektör10.Remove(silinecekVektör);
+                MainScript._instance.TekrarOlustur10();
+            }
+            else if(this.altinMiktari==20)
+            {
+                Destroy(other.gameObject);
+                Debug.Log("altinoluşturuldu");
+                MainScript.gizliAltinVektör.Remove(silinecekVektör);
+                MainScript._instance.TekrarOlusturGizli();
+            }
+           
+        }
+      
+        if (other.CompareTag("oyuncu"))
+        {
+            Vector3 silinecekVektör = new Vector3(other.gameObject.transform.position.x, other.gameObject.transform.position.y, 0);
+           // MainScript._instance.altinTiles[Convert.ToInt32(silinecekVektör.x), Convert.ToInt32(silinecekVektör.y)] = null;
+            if (this.altinMiktari == 5)
+            {
+                MainScript.altinVektör5.Remove(silinecekVektör);
             }
             else if (this.altinMiktari == 10)
             {
                 MainScript.altinVektör10.Remove(silinecekVektör);
-                MainScript._instance.altinTiles[Convert.ToInt32(silinecekVektör.x), Convert.ToInt32(silinecekVektör.y)] = null;
-            }
-            MainScript.calistiMi = true;
 
-        }
-        if (other.CompareTag("oyuncu"))
-        {
+            }
+            else if (this.AltinMiktari == 20)
+            {
+                MainScript.açılanVektör.Remove(silinecekVektör);
+                MainScript.altinVektör.Remove(silinecekVektör);
+            }
+
             Debug.Log("asdfas" + other.transform.gameObject.name);
             Destroy(this.gameObject);
             Debug.Log("bbbbb" + this.gameObject.name);
-            MainScript.altinKareSayisi--;
-         //   MainScript.dene = false;
         }
-      //  yield return new WaitForSeconds(3);
 
     }
     public void OnTriggerExit2D(Collider2D collision)
     {
-        if(collision.CompareTag("oyuncu"))
+        if (collision.CompareTag("oyuncu"))
         {
-            this.gameObject.SetActive(true);
+            if (this.gizliMi == true)
+            {
+                try
+                {
+                    this.GetComponent<SpriteRenderer>().enabled = true;
+                    Vector3 vektör = new Vector3(this.transform.position.x, this.transform.position.y, 0);
+                    MainScript.açılanVektör.Add(vektör);
+                    MainScript.altinVektör.Add(vektör);
+                    MainScript.gizliAltinVektör.Remove(vektör);
+
+                }
+                catch
+                {
+
+                }
+            }
+
         }
     }
 
