@@ -1,3 +1,3 @@
-# AltinToplamaOyunu
+# GoldCollectionGame
  # C# , Unity
  
